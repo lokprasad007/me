@@ -1,21 +1,10 @@
 @echo off
-title NEXUS 3.0 Instant Online Deployment
+title NEXUS 3.0 Cloudflare Online Launcher
 echo ===================================================================
-echo  NEXUS 3.0 STUDY HUB - INSTANT ONLINE LAUNCHER
+echo  NEXUS 3.0 STUDY HUB - CLOUDFLARE SECURE ONLINE LAUNCHER
 echo ===================================================================
 echo.
-echo Starting local web server...
-start /B python serve.py
-
-timeout /t 2 >nul
-
-echo Starting secure cloud tunnel...
+echo Starting local web server and Cloudflare Edge Tunnel...
 echo.
-echo Your public link will be: https://vtu-study-nexus.loca.lt
-echo If prompted for a password on your phone, enter your IP:
-curl -s https://api.ipify.org
-echo.
-echo.
-echo ===================================================================
-npx --yes localtunnel --port 8080 --subdomain vtu-study-nexus
+python launch_cloudflare.py
 pause

@@ -1,18 +1,2 @@
-======================================================================
- NEXUS 3.0 VTU STUDY HUB - YOUR LIVE ONLINE LINK
-======================================================================
-
-🌐 PUBLIC ONLINE LINK:
-https://vtu-study-nexus.loca.lt
-
-🔑 TUNNEL PASSWORD / IP (if prompted on first visit):
-223.181.115.217
-
-📱 How to access:
-- Open https://vtu-study-nexus.loca.lt on your phone, iPad, or laptop.
-- If it shows a friendly verification screen asking for IP / password, enter:
-  223.181.115.217
-  and click "Click to Submit".
-- That's it! Your study hub and all 12 academic files will load immediately.
-
-======================================================================
+NEXUS Study Hub Cloudflare Public Link:
+https://reality-islands-departments-letters.trycloudflare.com
