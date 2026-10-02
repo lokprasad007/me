@@ -245,8 +245,10 @@
       if (state.activeCategory === 'ds' && file.courseCode !== 'BCIDS302') return false;
       if (state.activeCategory === 'arch' && !file.courseCode.includes('AT') && !file.courseCode.includes('BCO')) return false;
       if (state.activeCategory === 'qb' && file.type !== 'Question Bank') return false;
+      if (state.activeCategory === 'placement' && file.subject !== 'Placement Essentials' && file.courseCode !== 'ROADMAP' && file.type !== 'Placement Material') return false;
       if (state.activeCategory === 'career' && file.courseCode !== 'ROADMAP' && file.courseCode !== 'VTU-CALENDAR') return false;
       if (state.activeCategory === 'starred' && !state.starred.has(file.filename)) return false;
+
 
       if (q) {
         const inTitle = file.title.toLowerCase().includes(q);
