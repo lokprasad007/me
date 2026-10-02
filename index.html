@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyberpunk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>NEXUS 3.0 &bull; VTU Academic Study Hub & Document Vault</title>
+  <meta name="description" content="Immersive in-browser portal for VTU 3rd Semester academic study materials, lecture slides, notes, question banks, and roadmaps." />
+  
+  <!-- PWA & Mobile Web Capabilities -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <meta name="theme-color" content="#00f2fe" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NEXUS 3.0" />
+
+  <!-- Social & Open Graph Sharing Meta -->
+  <meta property="og:title" content="NEXUS 3.0 &bull; VTU Academic Study Hub" />
+  <meta property="og:description" content="Access all VTU 3rd Semester lecture notes, textbooks, question banks, and interactive syllabus trackers online." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/icons/icon-512.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- Mozilla PDF.js for Universal Cross-Platform PDF Rendering Online -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+  <!-- Ambient Interactive Background Canvas & Glowing Orbs -->
+  <canvas id="ambientCanvas"></canvas>
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+  <div class="bg-glow-orb orb-3"></div>
+
+  <!-- Main Application Container -->
+  <div class="app-container">
+
+    <!-- Top Sticky Navigation Bar -->
+    <header class="navbar">
+      <div class="nav-brand" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="brand-icon">
+          <span>N3</span>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">
+            NEXUS PORTAL
+            <span class="brand-version">VTU 3RD SEM</span>
+          </div>
+          <span class="brand-subtitle">Knowledge Vault &bull; 2025-26 Scheme</span>
+        </div>
+      </div>
+
+      <nav class="nav-center">
+        <button class="nav-btn active" onclick="window.nexusApp.setSearch('')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Document Library
+        </button>
+        <button class="nav-btn" onclick="window.nexusApp.openSyllabusModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          Syllabus Tracker
+        </button>
+        <button class="nav-btn" onclick="window.nexusApp.openNotesModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          Study Notepad
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Host & Share Online Button -->
+        <button class="quick-tool-btn primary" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;" onclick="window.nexusApp.openDeployModal()">
+          <span>🚀 Host Online</span>
+        </button>
+
+        <!-- Share Portal Link -->
+        <button class="icon-btn" onclick="window.nexusApp.sharePortal()" title="Share Link or Copy URL">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        </button>
+
+        <!-- Audio FX Toggle -->
+        <button class="icon-btn active" id="soundToggleBtn" title="Toggle Sound FX">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        </button>
+
+        <!-- Theme Switcher -->
+        <button class="icon-btn" id="themeCycleBtn" title="Switch Theme (Cyberpunk / Emerald / Solar / Light)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <!-- Bookmarks Count -->
+        <button class="icon-btn" onclick="document.querySelector('[data-category=starred]').click()" title="View Starred Favorites">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span class="badge-counter" id="navStarBadge">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Section & Real-Time Stats -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-pill">
+            <span class="pulse-dot"></span>
+            ACTIVE ONLINE WORKSPACE &bull; AUTONOMOUS SCHEME 2024-26
+          </div>
+          <h1 class="hero-title">
+            Your Immersive <span class="highlight">Academic Hub</span> & Study Vault
+          </h1>
+          <p class="hero-desc">
+            Direct high-speed access to all your 3rd Semester curriculum files — comprehensive master textbooks, official VTU question banks, faculty lecture notes, and engineering roadmaps with built-in reading tools.
+          </p>
+        </div>
+
+        <div class="hero-quick-tools">
+          <button class="quick-tool-btn primary" onclick="window.nexusApp.openSyllabusModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            Exam Checklist & Modules
+          </button>
+          <button class="quick-tool-btn" onclick="document.querySelector('[data-category=qb]').click()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Question Banks (3)
+          </button>
+          <button class="quick-tool-btn" onclick="window.nexusApp.openNotesModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Revision Notepad
+          </button>
+        </div>
+      </div>
+
+      <!-- Live KPI Metrics Strip -->
+      <div class="stats-strip">
+        <div class="stat-card glass-panel" style="--card-accent: var(--accent-cyan);">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Academic Files</span>
+          </div>
+        </div>
+
+        <div class="stat-card glass-panel" style="--card-accent: var(--accent-emerald);">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-value">118.8 MB</span>
+            <span class="stat-label">Total Storage</span>
+          </div>
+        </div>
+
+        <div class="stat-card glass-panel" style="--card-accent: var(--accent-purple);">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-value">500+</span>
+            <span class="stat-label">Study Pages</span>
+          </div>
+        </div>
+
+        <div class="stat-card glass-panel" style="--card-accent: var(--accent-amber);">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-value" id="statStarredCount">0</span>
+            <span class="stat-label">Favorites Starred</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar: Search, Filters, Sorting & View Modes -->
+    <section class="toolbar-section glass-panel">
+      <div class="toolbar-top">
+        <div class="search-box">
+          <div class="search-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Search files by title, subject, code, module topics, or author..."
+            autocomplete="off"
+          />
+          <button id="clearSearchBtn" class="clear-search-btn" title="Clear Search">✕</button>
+          <span class="search-shortcut">/</span>
+        </div>
+
+        <div class="toolbar-controls">
+          <!-- Sort Options -->
+          <div class="sort-select-wrapper">
+            <select id="sortSelect" class="sort-select">
+              <option value="default">Sort: Recommended Order</option>
+              <option value="name-asc">Title: A &rarr; Z</option>
+              <option value="name-desc">Title: Z &rarr; A</option>
+              <option value="size-desc">File Size: Largest First</option>
+              <option value="size-asc">File Size: Smallest First</option>
+              <option value="pages-desc">Page Count: High &rarr; Low</option>
+            </select>
+            <div class="sort-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+
+          <!-- View Mode Toggle -->
+          <div class="view-mode-toggle">
+            <button id="viewGridBtn" class="view-btn active" title="3D Card Grid View">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            </button>
+            <button id="viewTableBtn" class="view-btn" title="Compact Table List View">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-category="all">
+          <span>All Documents</span>
+          <span class="tab-badge" id="resultsCount">12</span>
+        </button>
+        <button class="filter-tab" data-category="os">
+          <span>Operating Systems (BCSOS303)</span>
+          <span class="tab-badge">5</span>
+        </button>
+        <button class="filter-tab" data-category="ds">
+          <span>Data Structures (BCIDS302)</span>
+          <span class="tab-badge">4</span>
+        </button>
+        <button class="filter-tab" data-category="arch">
+          <span>Computer Architecture (AT)</span>
+          <span class="tab-badge">1</span>
+        </button>
+        <button class="filter-tab" data-category="qb">
+          <span>Question Banks</span>
+          <span class="tab-badge">3</span>
+        </button>
+        <button class="filter-tab" data-category="career">
+          <span>Roadmaps & Calendar</span>
+          <span class="tab-badge">2</span>
+        </button>
+        <button class="filter-tab" data-category="starred">
+          <span>★ Starred</span>
+          <span class="tab-badge" id="tabStarCount">0</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Documents Container -->
+    <main>
+      <!-- Grid Mode -->
+      <div id="documentsGrid" class="documents-grid"></div>
+
+      <!-- Table Mode -->
+      <div id="documentsTable" class="documents-table-wrap" style="display: none;">
+        <table class="documents-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">★</th>
+              <th>Document Title & Details</th>
+              <th>Code</th>
+              <th>Subject</th>
+              <th>Pages</th>
+              <th>Size</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="glass-panel" style="display: none; padding: 4rem 2rem; text-align: center; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
+        <div style="font-size: 3rem;">🔍</div>
+        <h3 style="font-size: 1.4rem;">No matching study materials found</h3>
+        <p style="color: var(--text-muted); max-width: 450px;">
+          Try adjusting your search keywords or resetting the category filter tab.
+        </p>
+        <button class="quick-tool-btn primary" onclick="document.getElementById('searchInput').value = ''; window.nexusApp.setSearch('');">
+          Reset All Filters
+        </button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div>
+        <strong>NEXUS Academic Portal</strong> &bull; VTU 3rd Semester Autonomous Suite 2025-26 &bull; Online Ready
+      </div>
+      <div class="footer-links">
+        <a class="footer-link" href="#" onclick="window.nexusApp.openDeployModal(); return false;">Deploy / Host Online 🚀</a>
+        <a class="footer-link" href="#" onclick="window.nexusApp.openSyllabusModal(); return false;">Syllabus Breakdown</a>
+        <a class="footer-link" href="#" onclick="window.nexusApp.openNotesModal(); return false;">Notepad</a>
+        <a class="footer-link" href="files/academic-calendar-sem3-5-2026-27.pdf" target="_blank">Academic Calendar ↗</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- =======================================================================
+       IN-BROWSER DOCUMENT VIEWER MODAL (UNIVERSAL PDF.js + NATIVE + GOOGLE DOCS)
+       ======================================================================= -->
+  <div id="viewerModal" class="modal-overlay">
+    <div class="modal-container">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title-area">
+          <div class="modal-file-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          </div>
+          <div>
+            <h2 id="modalDocTitle">Document Title</h2>
+            <div id="modalMetaPills" class="modal-meta-pills"></div>
+          </div>
+        </div>
+
+        <div class="modal-controls">
+          <!-- Previous / Next File Buttons -->
+          <button class="nav-arrow-btn" title="Previous File (Left Arrow)" onclick="window.nexusApp.prevDoc()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="nav-arrow-btn" title="Next File (Right Arrow)" onclick="window.nexusApp.nextDoc()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+
+          <!-- Star Button -->
+          <button id="modalStarBtn" class="star-btn" title="Star Document">★</button>
+
+          <!-- Open in Full Tab -->
+          <a id="modalOpenTabBtn" class="action-btn secondary-btn" href="#" target="_blank" title="Open in Full Tab">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Open Tab
+          </a>
+
+          <!-- Download Button -->
+          <a id="modalDownloadBtn" class="action-btn secondary-btn" href="#" download title="Download File">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download
+          </a>
+
+          <!-- Close Modal -->
+          <button class="modal-close-btn" title="Close Reader (Esc)" onclick="window.nexusApp.closeViewer()">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Viewer + Collapsible Notes Sidebar) -->
+      <div class="modal-body">
+        <div class="viewer-frame-container">
+          <!-- PDF.js Interactive Reader Toolbar -->
+          <div id="pdfReaderToolbar" class="pdf-reader-toolbar">
+            <!-- Page Controls -->
+            <div class="pdf-toolbar-group">
+              <button class="pdf-tool-btn" onclick="window.nexusApp.prevPdfPage()" title="Previous Page">◀ Prev</button>
+              <div class="pdf-page-display">
+                <span>Page</span>
+                <input type="number" id="pdfPageInput" class="pdf-page-input" value="1" min="1" />
+                <span>of <strong id="pdfPageTotal">1</strong></span>
+              </div>
+              <button class="pdf-tool-btn" onclick="window.nexusApp.nextPdfPage()" title="Next Page">Next ▶</button>
+            </div>
+
+            <!-- Zoom & Fit Controls -->
+            <div class="pdf-toolbar-group">
+              <button class="pdf-tool-btn" onclick="window.nexusApp.zoomPdf(-0.25)" title="Zoom Out">-</button>
+              <button class="pdf-tool-btn" onclick="window.nexusApp.zoomPdf(0.25)" title="Zoom In">+</button>
+              <button class="pdf-tool-btn" onclick="window.nexusApp.fitPdfWidth()" title="Fit to Window Width">Fit Width 📐</button>
+            </div>
+
+            <!-- Reader Mode Switcher -->
+            <div class="pdf-toolbar-group">
+              <button class="pdf-tool-btn pdf-mode-btn active" data-mode="canvas" onclick="window.nexusApp.setViewerMode('canvas')" title="Cross-Device Canvas View (Mobile & Tablet Friendly)">📱 Interactive</button>
+              <button class="pdf-tool-btn pdf-mode-btn" data-mode="iframe" onclick="window.nexusApp.setViewerMode('iframe')" title="Native Browser PDF Plug-in">🖥️ Native</button>
+              <button class="pdf-tool-btn pdf-mode-btn" data-mode="gdocs" onclick="window.nexusApp.setViewerMode('gdocs')" title="Google Docs Online Viewer">🌐 Google Docs</button>
+            </div>
+          </div>
+
+          <!-- PDF.js Canvas Viewport -->
+          <div id="pdfCanvasWrapper" class="pdf-canvas-viewport">
+            <div id="pdfLoadingSpinner" class="pdf-loading-overlay">
+              <div class="spinner"></div>
+              <span>Rendering Document...</span>
+            </div>
+            <canvas id="pdfRenderCanvas"></canvas>
+          </div>
+
+          <!-- Native Iframe Viewport -->
+          <iframe id="docViewerIframe" class="doc-iframe" src="about:blank" style="display: none;"></iframe>
+
+          <!-- Presentation Slide Showcase -->
+          <div id="pptViewerCanvas" class="ppt-viewer-canvas" style="display: none;"></div>
+        </div>
+
+        <!-- Sidebar: File Info & Live Scratchpad -->
+        <aside class="modal-sidebar">
+          <div class="sidebar-section">
+            <div class="sidebar-title">
+              <span>DOCUMENT METADATA</span>
+            </div>
+            <div class="sidebar-meta-list">
+              <div class="meta-row">
+                <span class="meta-row-label">Subject</span>
+                <span class="meta-row-val" id="sideMetaSubject">-</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-row-label">Course Code</span>
+                <span class="meta-row-val" id="sideMetaCode">-</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-row-label">Author / Source</span>
+                <span class="meta-row-val" id="sideMetaAuthor">-</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-row-label">Pages / Slides</span>
+                <span class="meta-row-val" id="sideMetaPages">-</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-row-label">Size</span>
+                <span class="meta-row-val" id="sideMetaSize">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-title">
+              <span>KEY TOPICS & SYLLABUS TAGS</span>
+            </div>
+            <div class="doc-tags" id="sideMetaTopics"></div>
+          </div>
+
+          <div class="sidebar-section" style="flex: 1; display: flex; flex-direction: column;">
+            <div class="sidebar-title">
+              <span>DOCUMENT REVISION NOTES</span>
+            </div>
+            <textarea id="docNotesArea" class="doc-notes-area" placeholder="Jot down formulas, questions, or revision notes for this document... (auto-saved)"></textarea>
+            <div class="notes-save-status" id="notesSaveStatus">Saved in local storage</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       SYLLABUS & EXAM TRACKER MODAL
+       ======================================================================= -->
+  <div id="syllabusModal" class="modal-overlay">
+    <div class="syllabus-modal-container">
+      <div class="modal-header">
+        <div class="modal-title-area">
+          <div class="modal-file-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </div>
+          <div>
+            <h2>VTU 3rd Sem Syllabus & Exam Readiness Tracker</h2>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Track revised topics, monitor exam coverage, and instantly view relevant notes per module.
+            </div>
+          </div>
+        </div>
+
+        <button class="modal-close-btn" onclick="window.nexusApp.closeSyllabusModal()">✕</button>
+      </div>
+
+      <div class="syllabus-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <!-- Subject Switcher -->
+          <div class="subject-switcher">
+            <button class="subject-tab-btn active" data-subject="BCSOS303">
+              <span>Operating Systems</span>
+              <span class="tab-badge">BCSOS303</span>
+            </button>
+            <button class="subject-tab-btn" data-subject="BCIDS302">
+              <span>Data Structures</span>
+              <span class="tab-badge">BCIDS302</span>
+            </button>
+          </div>
+
+          <!-- Overall Readiness -->
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);" id="overallSyllabusProgress">0% Prepared</span>
+            <div class="progress-bar-wrap" style="width: 140px; height: 8px;">
+              <div class="progress-bar-fill" id="overallProgressBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modules Container -->
+        <div id="syllabusModulesContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       GLOBAL STUDY NOTEPAD MODAL
+       ======================================================================= -->
+  <div id="notesModal" class="modal-overlay">
+    <div class="syllabus-modal-container" style="max-width: 800px;">
+      <div class="modal-header">
+        <div class="modal-title-area">
+          <div class="modal-file-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </div>
+          <div>
+            <h2>Central Study Scratchpad & Revision Notes</h2>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Persistent study scratchpad. Saved automatically to your browser storage.
+            </div>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="window.nexusApp.closeNotesModal()">✕</button>
+      </div>
+
+      <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; flex: 1;">
+        <textarea id="globalNotesArea" class="doc-notes-area" style="min-height: 380px; font-size: 0.95rem; line-height: 1.6;" placeholder="# VTU 3rd Sem Study Notes&#10;&#10;## Important Operating Systems Formulas:&#10;- CPU Utilization = 1 - p^n&#10;- Turnaround Time = Completion Time - Arrival Time&#10;- Waiting Time = Turnaround Time - Burst Time&#10;&#10;## Data Structures Important Problems:&#10;- Infix to Postfix conversion using Stacks&#10;- Circular Queue insert & delete conditions&#10;- Binary Search Tree (BST) deletion cases&#10;&#10;Type your own notes here..."></textarea>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <span style="font-size: 0.8rem; color: var(--text-dim);">Changes are preserved automatically on typing.</span>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="quick-tool-btn" onclick="window.nexusApp.saveGlobalNotes()">Save Snapshot</button>
+            <button class="quick-tool-btn primary" onclick="window.nexusApp.exportNotes()">Export Notes (.md)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       HOST & DEPLOY ONLINE MODAL (FREE & INSTANT OPTIONS)
+       ======================================================================= -->
+  <div id="deployModal" class="modal-overlay">
+    <div class="syllabus-modal-container" style="max-width: 950px;">
+      <div class="modal-header">
+        <div class="modal-title-area">
+          <div class="modal-file-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </div>
+          <div>
+            <h2>Host & Share Your Study Hub Online (100% Free)</h2>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              All configuration files (Vercel, Netlify, GitHub Pages) are already generated and ready!
+            </div>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="window.nexusApp.closeDeployModal()">✕</button>
+      </div>
+
+      <div class="syllabus-body" style="gap: 1.25rem;">
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Choose any of these free methods to deploy this exact study hub with all its files online:
+        </p>
+
+        <div class="deploy-card-grid">
+          <!-- Netlify Drop (Fastest) -->
+          <div class="deploy-option-card" style="--card-color: #00f5d4;">
+            <div class="deploy-header">
+              <div class="deploy-icon">💧</div>
+              <div>
+                <h3 style="font-size: 1.1rem; color: #fff;">Netlify Drop</h3>
+                <span class="deploy-badge-pill" style="background: rgba(0, 245, 212, 0.15); color: #00f5d4;">15 Seconds &bull; Zero Setup</span>
+              </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              1. Open <a href="https://app.netlify.com/drop" target="_blank" style="color: #00f5d4; font-weight: 600;">app.netlify.com/drop</a> in your browser.<br>
+              2. Drag and drop this folder (<strong>D:\3</strong>) directly into the browser circle.<br>
+              3. Done! You receive an instant live HTTPS link to share with everyone.
+            </p>
+            <a class="action-btn preview-btn" href="https://app.netlify.com/drop" target="_blank" style="text-align: center; text-decoration: none;">
+              Open Netlify Drop ↗
+            </a>
+          </div>
+
+          <!-- GitHub Pages -->
+          <div class="deploy-option-card" style="--card-color: #00f2fe;">
+            <div class="deploy-header">
+              <div class="deploy-icon">🐙</div>
+              <div>
+                <h3 style="font-size: 1.1rem; color: #fff;">GitHub Pages</h3>
+                <span class="deploy-badge-pill">Free Forever</span>
+              </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              Automatic CI/CD workflow is already prepared in <code>.github/workflows/deploy.yml</code>. Run in PowerShell:
+            </p>
+            <div class="terminal-box">
+              git init<br>
+              git add .<br>
+              git commit -m "Deploy Nexus Hub"<br>
+              git branch -M main
+              <button class="copy-cmd-btn" onclick="window.nexusApp.copyText('git init\ngit add .\ngit commit -m \"Deploy Nexus Hub\"\ngit branch -M main', this)">Copy</button>
+            </div>
+          </div>
+
+          <!-- Vercel -->
+          <div class="deploy-option-card" style="--card-color: #ffb703;">
+            <div class="deploy-header">
+              <div class="deploy-icon">▲</div>
+              <div>
+                <h3 style="font-size: 1.1rem; color: #fff;">Vercel</h3>
+                <span class="deploy-badge-pill" style="background: rgba(255, 183, 3, 0.15); color: #ffb703;">1 Command CLI</span>
+              </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              <code>vercel.json</code> is pre-configured with caching and MIME rules. Deploy in seconds:
+            </p>
+            <div class="terminal-box">
+              npx vercel --prod
+              <button class="copy-cmd-btn" onclick="window.nexusApp.copyText('npx vercel --prod', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       FLOATING POMODORO STUDY TIMER
+       ======================================================================= -->
+  <aside class="pomodoro-floating-widget" title="Pomodoro Focus Timer">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 14px;">⏱</span>
+      <span class="pomo-time-display" id="pomoDisplay">25:00</span>
+    </div>
+    <button class="pomo-btn" id="pomoToggleBtn" onclick="window.nexusApp.togglePomo()" title="Start / Pause Focus Timer">
+      ▶
+    </button>
+    <button class="icon-btn" style="width: 28px; height: 28px; font-size: 11px;" onclick="window.nexusApp.resetPomo(25)" title="Reset to 25m Focus">
+      ↺
+    </button>
+    <button class="icon-btn" style="width: 28px; height: 28px; font-size: 11px;" onclick="window.nexusApp.resetPomo(5)" title="5m Short Break">
+      ☕
+    </button>
+  </aside>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
