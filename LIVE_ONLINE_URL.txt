@@ -1,2 +1,18 @@
-NEXUS Study Hub Cloudflare Public Link:
-https://reality-islands-departments-letters.trycloudflare.com
+======================================================================
+ NEXUS 3.0 VTU STUDY HUB - OFFICIAL PERMANENT ONLINE LINK
+======================================================================
+
+🌐 OFFICIAL GITHUB PAGES WEBSITE:
+https://lokprasad007.github.io/me/
+
+🐙 GITHUB REPOSITORY:
+https://github.com/lokprasad007/me
+
+📱 Features:
+- 100% Free Forever & Hosted on GitHub's Global CDN
+- Works on your phone, iPad, and laptop anywhere in the world
+- Built-in PDF.js reader with mobile page flipping and zoom
+- Interactive syllabus tracker for Operating Systems & Data Structures
+- PWA ready (tap 'Add to Home Screen' on your phone)
+
+======================================================================
